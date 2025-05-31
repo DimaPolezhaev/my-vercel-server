@@ -1,4 +1,16 @@
-from flask import jsonify
+from flask import Flask, jsonify
 
-def handler(request):
-    return jsonify({'status': 'ok', 'message': 'Server is running'})
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return jsonify({
+        'status': 'running',
+        'message': 'Сервер для отправки email работает',
+        'endpoints': {
+            'POST /api/send_email': 'Отправка email'
+        }
+    })
+
+if __name__ == '__main__':
+    app.run()

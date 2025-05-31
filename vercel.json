@@ -2,18 +2,20 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/*.py",
+      "src": "*.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "api/send_email.py"
+      "src": "/api/send_email",
+      "dest": "send_email.py",
+      "methods": ["POST"]
+    },
+    {
+      "src": "/",
+      "dest": "api.py",
+      "methods": ["GET"]
     }
-  ],
-  "env": {
-    "EMAIL_USER": "perozhizni@gmail.com",
-    "EMAIL_PASSWORD": "bmzo ggza nxuv biqc"
-  }
+  ]
 }
