@@ -1,40 +1,51 @@
-import os
+from flask import Flask, request, jsonify
 import smtplib
 from email.mime.text import MIMEText
-from flask import Flask, request, jsonify
-from dotenv import load_dotenv
-
-load_dotenv()
 
 app = Flask(__name__)
 
+# Health check endpoint
+@app.route('/', methods=['GET'])
+def health_check():
+    return jsonify({
+        "status": "active",
+        "service": "Bird Rescue API",
+        "endpoints": {
+            "POST /api/send_email": "Send email to rescuers"
+        }
+    })
+
+# Email sending endpoint
 @app.route('/api/send_email', methods=['POST'])
 def send_email():
     try:
-        data = request.get_json()
+        data = request.json
         
-        # Конфигурация SMTP для Gmail
-        smtp_server = 'smtp.gmail.com'
+        # SMTP Configuration
+        smtp_server = "smtp.gmail.com"
         smtp_port = 587
-        email_user = 'perozhizni@gmail.com'
-        email_password = 'bmzo ggza nxuv biqc'  # Пароль приложения
+        sender_email = "perozhizni@gmail.com"
+        sender_password = "bmzo ggza nxuv biqc"  # App password
         
-        # Формирование письма
-        msg = MIMEText(data.get('message', ''), 'plain', 'utf-8')
-        msg['Subject'] = data.get('subject', 'Запрос на помощь птице')
-        msg['From'] = email_user
-        msg['To'] = data.get('to', 'pozitivgame88@gmail.com')
+        # Create message
+        msg = MIMEText(data.get("message", ""))
+        msg["Subject"] = data.get("subject", "Bird Rescue Request")
+        msg["From"] = sender_email
+        msg["To"] = data.get("to", "pozitivgame88@gmail.com")
         
-        # Отправка письма
+        # Send email
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls()
-            server.login(email_user, email_password)
+            server.login(sender_email, sender_password)
             server.send_message(msg)
         
-        return jsonify({'status': 'success'}), 200
+        return jsonify({"status": "success"}), 200
     
     except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
