@@ -2,23 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/*.py",
-      "use": "@vercel/python",
-      "config": {
-        "runtime": "python3.9"
-      }
+      "src": "server.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/send_email",
-      "dest": "api/send_email.py",
-      "methods": ["POST"]
-    },
-    {
-      "src": "/",
-      "dest": "api/send_email.py",
-      "methods": ["GET"]
+      "src": "/(.*)",
+      "dest": "server.js"
     }
   ]
 }
